@@ -9,8 +9,8 @@
 #include <ctype.h>
 
 // ADD YOUR IMPORTS HERE
-
-
+#include <FastLED.h>
+#include "DHT.h"
 
 #ifndef _WIFI_H 
 #include <WiFi.h>
@@ -43,14 +43,14 @@
 
 
 // MQTT CLIENT CONFIG  
-static const char* pubtopic      = "620012345";                    // Add your ID number here
-static const char* subtopic[]    = {"620012345_sub","/elet2415"};  // Array of Topics(Strings) to subscribe to
-static const char* mqtt_server   = "local";         // Broker IP address or Domain name as a String 
+static const char* pubtopic      = "620148117";                    // Add your ID number here
+static const char* subtopic[]    = {"620148117_sub","/elet2415"};  // Array of Topics(Strings) to subscribe to
+static const char* mqtt_server   = "http://www.yanacreations.com/";         // Broker IP address or Domain name as a String 
 static uint16_t mqtt_port        = 1883;
 
 // WIFI CREDENTIALS
-const char* ssid       = "YOUR_SSID";     // Add your Wi-Fi ssid
-const char* password   = "YOUR_PASSWORD"; // Add your Wi-Fi password 
+const char* ssid       = "MonaConnect";     // Add your Wi-Fi ssid
+const char* password   = ""; // Add your Wi-Fi password 
 
 
 
@@ -93,18 +93,35 @@ double calcHeatIndex(double Temp, double Humid);
 #include "mqtt.h"
 #endif
 
+#define DHTTYPE DHT22;
+#define DHTPIN 4);
+DHT dht(DHTPIN,DHTTYPE);
+
+#define nl 33;
+#define DATA_PIN 3;
+//#define cpn 13;
+CRGB leds[nl];
+
+#define btn 21;
+#define a 15;
 // Temporary Variables 
 
 
 void setup() {
-  Serial.begin(115200);  // INIT SERIAL  
+  Serial.begin(115200);  // INIT SERIAL 
+  Serial.println(F("---Begin Read---")); 
 
   // INITIALIZE ALL SENSORS AND DEVICES
+  pinMode(btn, INPUT_PULLUP);
+  pinMode(a, OUTPUT);
   
+
+  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, nl);
   /* Add all other necessary sensor Initializations and Configurations here */
 
 
   initialize();     // INIT WIFI, MQTT & NTP 
+  dht.begin();
   // vButtonCheckFunction(); // UNCOMMENT IF USING BUTTONS INT THIS LAB, THEN ADD LOGIC FOR INTERFACING WITH BUTTONS IN THE vButtonCheck FUNCTION
  }
   
@@ -127,7 +144,10 @@ void vButtonCheck( void * pvParameters )  {
       
     for( ;; ) {
         // Add code here to check if a button(S) is pressed
-        // then execute appropriate function if a button is pressed  
+        // then execute appropriate function if a button is pressed
+        if (digitalRead(btn)==LOW){
+          isNumber(0);
+        }  
 
         vTaskDelay(200 / portTICK_PERIOD_MS);  
     }
@@ -142,24 +162,41 @@ void vUpdate( void * pvParameters )  {
           // #######################################################
    
           // 1. Read Humidity and save in variable below
-          double h = 0;
+          double h = dht.readHumidity();
            
           // 2. Read temperature as Celsius   and save in variable below
-          double t = 0;    
- 
+          double t = dht.readTemperature();
+
+          if (isnan(h) || isnan(t)) {
+           Serial.println(F("Failed to read from DHT sensor!"));
+            return;
+          }    
 
           if(isNumber(t)){
               // ##Publish update according to ‘{"id": "student_id", "timestamp": 1702212234, "temperature": 30, "humidity":90, "heatindex": 30}’
 
               // 1. Create JSon object
+              StaticJsonDocument<1000> doc; // Create JSon object
               
               // 2. Create message buffer/array to store serialized JSON object
+              char message[1100]  = {0};
               
               // 3. Add key:value pairs to JSon object based on above schema
+              doc["id"]          = "620148117";
+              doc["timestamp"]   = getTimeStamp();
+              doc["temperature"] = t;
+              doc["humidity"]    = h;
+              doc["heatindex"]   = calcHeatIndex(t,h);
+              doc["ledA"]        = getLEDStatus(LED_A);
+              doc["ledB"]        = getLEDStatus(LED_B);
 
               // 4. Seralize / Covert JSon object to JSon string and store in message array
+              serializeJson(doc, message);
                
-              // 5. Publish message to a topic sobscribed to by both backend and frontend                
+              // 5. Publish message to a topic sobscribed to by both backend and frontend
+              if(mqtt.connected() ){
+                publish(pubtopic, message);
+              }                
 
           }
 
@@ -240,15 +277,29 @@ bool publish(const char *topic, const char *payload){
 
 double convert_Celsius_to_fahrenheit(double c){    
     // CONVERTS INPUT FROM °C TO °F. RETURN RESULTS     
+    return c*9/5 + 32;
 }
 
 double convert_fahrenheit_to_Celsius(double f){    
-    // CONVERTS INPUT FROM °F TO °C. RETURN RESULT    
+    // CONVERTS INPUT FROM °F TO °C. RETURN RESULT  
+    return (f - 32) * 5/9; 
 }
 
 double calcHeatIndex(double Temp, double Humid){
     // CALCULATE AND RETURN HEAT INDEX USING EQUATION FOUND AT https://byjus.com/heat-index-formula/#:~:text=The%20heat%20index%20formula%20is,an%20implied%20humidity%20of%2020%25
-  
+  double R = Humid;
+  double T = convert_Celsius_to_fahrenheit(Temp);
+  float c1 = 0 - 42.379;
+  float c2 = 0 - 2.04901523;
+  float c3 = 0 - 10.14333127;
+  float c4 = 0 - 0.22475541;
+  float c5 = 0 - 6.83783 * 0.001;
+  float c6 = 0 - 5.481717 * 0.01;
+  float c7 = 0 - 1.22874 * 0.001;
+  float c8 = 8.5282 * 0.0001;
+  float c9 = 0 - 1.99 * 0.000001;
+
+  return c1+c2*T + c3*R + c4*T*R + c5*T*T + c6*R*R + c7*T*T*R + c8*T*R*R + c9*T*T*R*R;
 }
  
 
