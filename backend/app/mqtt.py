@@ -16,7 +16,7 @@ class MQTT:
     ID = f"IOT_B_{randint(1,1000000)}"
 
     #  1. DEFINE ALL TOPICS TO SUBSCRIBE TO. BELOW ARE SOME EXAMPLES. YOUR ARE REQUIRED TO CHANGE THESE TO TOPICS THAT FITS YOUR USE CASE
-    sub_topics = [("620012345_pub", 0), ("620012345", 0), ("620012345_sub", 0)] #  A list of tuples of (topic, qos). Both topic and qos must be present in the tuple.
+    sub_topics = [("ht_status", 0), ("a", 0), ("/b", 0)] #  A list of tuples of (topic, qos). Both topic and qos must be present in the tuple.
 
 
     def __init__(self,mongo):
@@ -39,7 +39,7 @@ class MQTT:
          
 
         # 4. UPDATE MQTT SERVER AND PORT INFORMATION BELOW
-        self.client.connect_async("localhost", 1883, 60)
+        self.client.connect_async("http://www.yanacreations.com/", 9002, 60)
        
 
 
@@ -83,7 +83,17 @@ class MQTT:
 
     # 2. DEFINE CALLBACK FUNCTIONS(S) BELOW FOR EACH TOPIC(S) THE BACKEND SUBSCRIBES TO 
      
-
+    def ht_status(self, client, userdata, msg):
+        '''Process messages from Hardware'''
+        try:
+            topic = msg.topic
+            payload = msg.payload.decode("utf-8")
+            # print(payload) # UNCOMMENT WHEN DEBUGGING
+            # ADD YOUR CODE HERE TO PROCESS MESSAGE
+            update = loads(payload) # CONVERT FROM JSON STRING TO JSON OBJECT
+            self.mongo.addUpdate(update) # INSERT INTO DATABASE
+        except Exception as e:
+            print(f"MQTT: GDP Error - {str(e)}")
 
      
 

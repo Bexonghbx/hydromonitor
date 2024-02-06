@@ -9,8 +9,11 @@
 #include <ctype.h>
 
 // ADD YOUR IMPORTS HERE
+
 #include <FastLED.h>
-#include "DHT.h"
+#include <DHT.h>
+#include <DHT_U.h>
+#include <PubSubClient.h>
 
 #ifndef _WIFI_H 
 #include <WiFi.h>
@@ -35,7 +38,7 @@
  
 
 // DEFINE VARIABLES
-#define ARDUINOJSON_USE_DOUBLE      1 
+#define ARDUINOJSON_USE_DOUBLE  1 ;
 
 // DEFINE THE CONTROL PINS FOR THE DHT22 
 
@@ -44,11 +47,13 @@
 
 // MQTT CLIENT CONFIG  
 static const char* pubtopic      = "620148117";                    // Add your ID number here
-static const char* subtopic[]    = {"620148117_sub","/elet2415"};  // Array of Topics(Strings) to subscribe to
+static const char* subtopic[]    = {"ht_status","a","/b"};  // Array of Topics(Strings) to subscribe to
 static const char* mqtt_server   = "http://www.yanacreations.com/";         // Broker IP address or Domain name as a String 
 static uint16_t mqtt_port        = 1883;
 
 // WIFI CREDENTIALS
+//const char* ssid       = "UNTC-Connect"; // Add your Wi-Fi ssid
+//const char* password   = "risenlord^19"; // Add your Wi-Fi password 
 const char* ssid       = "MonaConnect";     // Add your Wi-Fi ssid
 const char* password   = ""; // Add your Wi-Fi password 
 
@@ -94,16 +99,16 @@ double calcHeatIndex(double Temp, double Humid);
 #endif
 
 #define DHTTYPE DHT22;
-#define DHTPIN 4);
+#define DHTPIN 4;
 DHT dht(DHTPIN,DHTTYPE);
 
-#define nl 33;
-#define DATA_PIN 3;
-//#define cpn 13;
-CRGB leds[nl];
+#define NUM_LEDS 7;
+#define DATA_PIN 21;
+#define CLOCK_PIN 13;
+CRGB leds[NUM_LEDS];
 
-#define btn 21;
-#define a 15;
+//#define btn 21;
+//#define a 15;
 // Temporary Variables 
 
 
@@ -112,11 +117,10 @@ void setup() {
   Serial.println(F("---Begin Read---")); 
 
   // INITIALIZE ALL SENSORS AND DEVICES
-  pinMode(btn, INPUT_PULLUP);
-  pinMode(a, OUTPUT);
+  
   
 
-  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, nl);
+  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
   /* Add all other necessary sensor Initializations and Configurations here */
 
 
@@ -145,9 +149,9 @@ void vButtonCheck( void * pvParameters )  {
     for( ;; ) {
         // Add code here to check if a button(S) is pressed
         // then execute appropriate function if a button is pressed
-        if (digitalRead(btn)==LOW){
+        /*if (digitalRead(btn)==LOW){
           isNumber(0);
-        }  
+        }  */
 
         vTaskDelay(200 / portTICK_PERIOD_MS);  
     }
@@ -187,8 +191,6 @@ void vUpdate( void * pvParameters )  {
               doc["temperature"] = t;
               doc["humidity"]    = h;
               doc["heatindex"]   = calcHeatIndex(t,h);
-              doc["ledA"]        = getLEDStatus(LED_A);
-              doc["ledB"]        = getLEDStatus(LED_B);
 
               // 4. Seralize / Covert JSon object to JSon string and store in message array
               serializeJson(doc, message);
@@ -247,10 +249,27 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   if (strcmp(type, "controls") == 0){
     // 1. EXTRACT ALL PARAMETERS: NODES, RED,GREEN, BLUE, AND BRIGHTNESS FROM JSON OBJECT
+    uint8_t n  = doc["NODES"];
+    uint8_t r  = doc["RED"];
+    uint8_t g  = doc["GREEN"];
+    uint8_t b  = doc["BLUE"];
+    uint8_t br = doc["BRIGHTNESS"];
 
     // 2. ITERATIVELY, TURN ON LED(s) BASED ON THE VALUE OF NODES. Ex IF NODES = 2, TURN ON 2 LED(s)
+    for (int i; 0<n; i++){
+      leds[i] = CRGB( r, g, b);
+      FastLED.setBrightness( br );
+      FastLED.show();
+      vTaskDelay(200 / portTICK_PERIOD_MS);
+    }
 
     // 3. ITERATIVELY, TURN OFF ALL REMAINING LED(s).
+    for (int i; n<(8-n); i++){
+      leds[i] = CRGB::Black;
+      FastLED.setBrightness( 0 );
+      FastLED.show();
+      vTaskDelay(200 / portTICK_PERIOD_MS);
+    }
    
   }
 }

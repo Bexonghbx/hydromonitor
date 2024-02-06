@@ -17,7 +17,7 @@ from os import getcwd
 from os.path import join, exists
 from time import time, ctime
 from math import floor
- 
+import functions
 
 
 
@@ -31,9 +31,10 @@ def get_all(start,end):
    
     if request.method == "GET":
         '''Add your code here to complete this route'''
-
-    # FILE DATA NOT EXIST
-    return jsonify({"status":"not found","data":[]})
+        functions.self.getAllInRange(start,end)
+    else:
+        # FILE DATA NOT EXIST
+        return jsonify({"status":"not found","data":[]})
    
 
 
@@ -44,9 +45,10 @@ def get_temperature_mmar(start,end):
    
     if request.method == "GET": 
         '''Add your code here to complete this route'''
-
-    # FILE DATA NOT EXIST
-    return jsonify({"status":"not found","data":[]})
+        functions.self.temperatureMMAR(start,end)
+    else:
+        # FILE DATA NOT EXIST
+        return jsonify({"status":"not found","data":[]})
 
 
 
@@ -58,9 +60,10 @@ def get_humidity_mmar(start,end):
    
     if request.method == "GET": 
         '''Add your code here to complete this route'''
-
-    # FILE DATA NOT EXIST
-    return jsonify({"status":"not found","data":[]})
+        functions.self.humidityMMAR(start,end)
+    else:
+        # FILE DATA NOT EXIST
+        return jsonify({"status":"not found","data":[]})
 
 
 
@@ -71,10 +74,11 @@ def get_freq_distro(variable,start,end):
     '''RETURNS FREQUENCY DISTRIBUTION FOR SPECIFIED VARIABLE'''
    
     if request.method == "GET": 
-        '''Add your code here to complete this route'''         
-
-    # FILE DATA NOT EXIST
-    return jsonify({"status":"not found","data":[]})
+        '''Add your code here to complete this route''' 
+        functions.self.frequencyDistro(start,end)
+    else:
+        # FILE DATA NOT EXIST
+        return jsonify({"status":"not found","data":[]})
 
 
 
