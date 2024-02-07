@@ -17,7 +17,7 @@ from os import getcwd
 from os.path import join, exists
 from time import time, ctime
 from math import floor
-import functions
+#   import functions
 
 
 

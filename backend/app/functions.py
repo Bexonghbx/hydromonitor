@@ -38,7 +38,7 @@ class DB:
         self.ReturnDocument                 = ReturnDocument
         self.PyMongoError               	= errors.PyMongoError
         self.BulkWriteError             	= errors.BulkWriteError  
-        self.tls                            = False # MUST SET TO TRUE IN PRODUCTION
+        self.tls                            = True # MUST SET TO TRUE IN PRODUCTION
 
 
     def __del__(self):
@@ -70,7 +70,7 @@ class DB:
         '''RETURNS A LIST OF OBJECTS. THAT FALLS WITHIN THE START AND END DATE RANGE'''
         try:
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
-            result      = list(remotedb.ELET2415.climo.find('''Add your query here'''))
+            result      = list('''remotedb.ELET2415.climo.find({timestamp:{$gte: start},timestamp:{$lte: end}})''')
         except Exception as e:
             msg = str(e)
             print("getAllInRange error ",msg)            
