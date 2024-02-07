@@ -38,7 +38,7 @@
  
 
 // DEFINE VARIABLES
-#define ARDUINOJSON_USE_DOUBLE  1 ;
+#define ARDUINOJSON_USE_DOUBLE  1 
 
 // DEFINE THE CONTROL PINS FOR THE DHT22 
 
@@ -46,7 +46,7 @@
 
 
 // MQTT CLIENT CONFIG  
-static const char* pubtopic      = "620148117";                    // Add your ID number here
+static const char* pubtopic      = "ht_status";                    // Add your ID number here
 static const char* subtopic[]    = {"ht_status","a","/b"};  // Array of Topics(Strings) to subscribe to
 static const char* mqtt_server   = "http://www.yanacreations.com/";         // Broker IP address or Domain name as a String 
 static uint16_t mqtt_port        = 1883;
@@ -98,13 +98,13 @@ double calcHeatIndex(double Temp, double Humid);
 #include "mqtt.h"
 #endif
 
-#define DHTTYPE DHT22;
-#define DHTPIN 4;
+#define DHTTYPE DHT22
+#define DHTPIN 14
 DHT dht(DHTPIN,DHTTYPE);
 
-#define NUM_LEDS 7;
-#define DATA_PIN 21;
-#define CLOCK_PIN 13;
+#define NUM_LEDS 7
+#define DATA_PIN 21
+#define CLOCK_PIN 13
 CRGB leds[NUM_LEDS];
 
 //#define btn 21;
@@ -122,10 +122,10 @@ void setup() {
 
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
   /* Add all other necessary sensor Initializations and Configurations here */
-
+  dht.begin();
 
   initialize();     // INIT WIFI, MQTT & NTP 
-  dht.begin();
+  
   // vButtonCheckFunction(); // UNCOMMENT IF USING BUTTONS INT THIS LAB, THEN ADD LOGIC FOR INTERFACING WITH BUTTONS IN THE vButtonCheck FUNCTION
  }
   
@@ -249,11 +249,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   if (strcmp(type, "controls") == 0){
     // 1. EXTRACT ALL PARAMETERS: NODES, RED,GREEN, BLUE, AND BRIGHTNESS FROM JSON OBJECT
-    uint8_t n  = doc["NODES"];
-    uint8_t r  = doc["RED"];
-    uint8_t g  = doc["GREEN"];
-    uint8_t b  = doc["BLUE"];
-    uint8_t br = doc["BRIGHTNESS"];
+    uint8_t n  = doc["leds"];
+    uint8_t r  = doc["color"]["r"];
+    uint8_t g  = doc["color"]["g"];
+    uint8_t b  = doc["color"]["b"];
+    uint8_t br = doc["brightness"];
 
     // 2. ITERATIVELY, TURN ON LED(s) BASED ON THE VALUE OF NODES. Ex IF NODES = 2, TURN ON 2 LED(s)
     for (int i; 0<n; i++){
@@ -264,7 +264,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     }
 
     // 3. ITERATIVELY, TURN OFF ALL REMAINING LED(s).
-    for (int i; n<(8-n); i++){
+    for (int i=n; i<7; i++){
       leds[i] = CRGB::Black;
       FastLED.setBrightness( 0 );
       FastLED.show();
