@@ -17,6 +17,10 @@
                             <RouterLink class="route" to="/control">
                                 <VBtn class="text-subtitle-2" density="compact" color="primary" :variant="(route.name == 'Control')? 'tonal':'text'">Control</VBtn>
                             </RouterLink>
+
+                            <RouterLink class="route" to="/live">
+                                <VBtn class="text-subtitle-2" density="compact" color="primary" :variant="(route.name == 'Live')? 'tonal':'text'">Live</VBtn>
+                            </RouterLink>
                                                                          
 
                         </VCol>

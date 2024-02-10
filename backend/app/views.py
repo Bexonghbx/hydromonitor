@@ -88,7 +88,12 @@ def get_images(filename):
    
     if request.method == "GET":
         '''Add your code here to complete this route'''
-        
+        directory   = join( getcwd(), Config.UPLOADS_FOLDER) 
+        filePath    = join( getcwd(), Config.UPLOADS_FOLDER, filename) 
+
+        # RETURN FILE IF IT EXISTS IN FOLDER
+        if exists(filePath):        
+            return send_from_directory(directory, filename)
         # FILE DOES NOT EXIST
         return jsonify({"status":"file not found"}), 404
 

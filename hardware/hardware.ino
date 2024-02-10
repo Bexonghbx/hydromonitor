@@ -48,7 +48,7 @@
 // MQTT CLIENT CONFIG  
 static const char* pubtopic      = "ht_status";                    // Add your ID number here
 static const char* subtopic[]    = {"ht_status","a","/b"};  // Array of Topics(Strings) to subscribe to
-static const char* mqtt_server   = "http://www.yanacreations.com/";         // Broker IP address or Domain name as a String 
+static const char* mqtt_server   = "dbs.msjrealtms.com";         // Broker IP address or Domain name as a String 
 static uint16_t mqtt_port        = 1883;
 
 // WIFI CREDENTIALS
@@ -99,7 +99,7 @@ double calcHeatIndex(double Temp, double Humid);
 #endif
 
 #define DHTTYPE DHT22
-#define DHTPIN 14
+#define DHTPIN 4
 DHT dht(DHTPIN,DHTTYPE);
 
 #define NUM_LEDS 7
@@ -171,10 +171,10 @@ void vUpdate( void * pvParameters )  {
           // 2. Read temperature as Celsius   and save in variable below
           double t = dht.readTemperature();
 
-          if (isnan(h) || isnan(t)) {
+          /*if (isnan(h) || isnan(t)) {
            Serial.println(F("Failed to read from DHT sensor!"));
             return;
-          }    
+          }    */
 
           if(isNumber(t)){
               // ##Publish update according to ‘{"id": "student_id", "timestamp": 1702212234, "temperature": 30, "humidity":90, "heatindex": 30}’
@@ -186,7 +186,7 @@ void vUpdate( void * pvParameters )  {
               char message[1100]  = {0};
               
               // 3. Add key:value pairs to JSon object based on above schema
-              doc["id"]          = "620148117";
+              doc["id"]          = "ht_status";
               doc["timestamp"]   = getTimeStamp();
               doc["temperature"] = t;
               doc["humidity"]    = h;

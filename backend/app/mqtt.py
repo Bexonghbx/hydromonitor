@@ -36,10 +36,10 @@ class MQTT:
         # 3. REGISTER CALLBACK FUNCTION(S) FOR EACH TOPIC USING THE self.client.message_callback_add("topic",self.function) FUNCTION
         # WHICH TAKES A TOPIC AND THE NAME OF THE CALLBACK FUNCTION YOU HAVE CREATED FOR THIS SPECIFIC TOPIC
 
-         
+        self.client.message_callback_add("ht_status",self.update)
 
         # 4. UPDATE MQTT SERVER AND PORT INFORMATION BELOW
-        self.client.connect_async("http://www.yanacreations.com/", 9002, 60)
+        self.client.connect_async("dbs.msjrealtms.com", 1883, 60)
        
 
 
@@ -83,17 +83,17 @@ class MQTT:
 
     # 2. DEFINE CALLBACK FUNCTIONS(S) BELOW FOR EACH TOPIC(S) THE BACKEND SUBSCRIBES TO 
      
-    def ht_status(self, client, userdata, msg):
+    def update(self, client, userdata, msg):
         '''Process messages from Hardware'''
         try:
             topic = msg.topic
             payload = msg.payload.decode("utf-8")
-            # print(payload) # UNCOMMENT WHEN DEBUGGING
+            print(payload) # UNCOMMENT WHEN DEBUGGING
             # ADD YOUR CODE HERE TO PROCESS MESSAGE
             update = loads(payload) # CONVERT FROM JSON STRING TO JSON OBJECT
             self.mongo.addUpdate(update) # INSERT INTO DATABASE
         except Exception as e:
-            print(f"MQTT: GDP Error - {str(e)}")
+            print(f"Status Update Error - {str(e)}")
 
      
 
