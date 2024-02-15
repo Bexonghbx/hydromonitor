@@ -21,6 +21,11 @@
                             <RouterLink class="route" to="/live">
                                 <VBtn class="text-subtitle-2" density="compact" color="primary" :variant="(route.name == 'Live')? 'tonal':'text'">Live</VBtn>
                             </RouterLink>
+
+                            <RouterLink class="route" to="/analysis">
+                                <VBtn class="text-subtitle-2" density="compact" color="primary" :variant="(route.name == 'Analysis')? 'tonal':'text'">Analysis</VBtn>
+                            </RouterLink>
+
                                                                          
 
                         </VCol>

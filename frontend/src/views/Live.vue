@@ -71,7 +71,7 @@ onMounted(()=>{
 
 onBeforeUnmount(()=>{
     // THIS FUNCTION IS CALLED RIGHT BEFORE THIS COMPONENT IS UNMOUNTED
-    
+    Mqtt.unsubcribeAll();
 });
 
 // WATCHERS
@@ -83,42 +83,62 @@ watch(payload,(data)=> {
 
  tempHiChart.value.series[1].addPoint({y:parseFloat(data.heatindex.toFixed(2)) ,x: data.timestamp * 1000 }, true, shift.value);
 
-})
+});
 
 const CreateCharts = async () => {
 // TEMPERATURE CHART
-tempHiChart.value = Highcharts.chart('container', {
-chart: { zoomType: 'x' },
-title: { text: 'Air Temperature and Heat Index Analysis', align: 'left' },
-yAxis: {
-title: { text: 'Air Temperature & Heat Index' , style:{color:'#000000'}},
-labels: { format: '{value} °C' }
-},
-xAxis: {
-type: 'datetime',
-title: { text: 'Time', style:{color:'#000000'} },
-},
-tooltip: { shared:true, },
-series: [
-{
-name: 'Temperature',
-type: 'spline',
-data: [],
-turboThreshold: 0,
-color: Highcharts.getOptions().colors[0]
-},
-{
-name: 'Heat Index',
-type: 'spline',
-data: [],
-turboThreshold: 0,
-color: Highcharts.getOptions().colors[1]
-} ],
-});
+    tempHiChart.value = Highcharts.chart('container', {
+        chart: { zoomType: 'x' },
+        title: { text: 'Air Temperature and Heat Index Analysis', align: 'left' },
+        
+        yAxis: {
+            title: { text: 'Air Temperature & Heat Index' , style:{color:'#000000'}},
+            labels: { format: '{value} °C' }
+        },
+        
+        xAxis: {
+            type: 'datetime',
+            title: { text: 'Time', style:{color:'#000000'} },
+        },
+
+        tooltip: { shared:true, },
+        series: [
+        {
+            name: 'Temperature',
+            type: 'spline',
+            data: [],
+            turboThreshold: 0,
+            color: Highcharts.getOptions().colors[0]
+        },
+
+        {
+            name: 'Heat Index',
+            type: 'spline',
+            data: [],
+            turboThreshold: 0,
+            color: Highcharts.getOptions().colors[1]
+        } ],
+    });
 };
 
+// COMPUTED PROPERTIES
+const temperature = computed(()=>{
+    if(!!payload.value){
+        return `${payload.value.temperature.toFixed(2)} °C`;
+    }
+});
 
+const heatindex = computed(()=>{
+    if(!!payload.value){
+        return `${payload.value.heatindex.toFixed(2)} °C`;
+    }
+});
 
+const humidity = computed(()=>{
+    if(!!payload.value){
+        return `${payload.value.humidity.toFixed(2)} °C`;
+    }
+});
 </script>
 
 

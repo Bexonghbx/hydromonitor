@@ -82,7 +82,7 @@ class DB:
         '''RETURNS MIN, MAX, AVG AND RANGE FOR HUMIDITY. THAT FALLS WITHIN THE START AND END DATE RANGE'''
         try:
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
-            result      = list(remotedb.climo.aggregate([{'$project':{'max':{'$max':'humidity'}, 'min':{'$min':'humidity'}, 'avg':{'$avg':'humidity'}, 'range':{'$subtract':[{'$max':'humidity'},{'$min': 'humidity'}]}}}]))
+            result      = list(remotedb.climo.aggregate([{'$project':{'max':{'$max':'humidity'}, 'min':{'$min':'humidity'}, 'avg':{'$avg':'humidity'}, 'range':{'$subtract':[{'$max':'humidity'},{'$min': 'humidity'}]}}},{'$gte':start,'$lte':end}]))
         except Exception as e:
             msg = str(e)
             print("humidityMMAS error ",msg)            
@@ -93,7 +93,7 @@ class DB:
         '''RETURNS MIN, MAX, AVG AND RANGE FOR TEMPERATURE. THAT FALLS WITHIN THE START AND END DATE RANGE'''
         try:
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
-            result      = list(remotedb.climo.aggregate([{'$project':{'max':{'$max':'temperature'}, 'min':{'$min':'temperature'}, 'avg':{'$avg':'temperature'}, 'range':{'$subtract':[{'$max':'temperature'},{'$min': 'temperature'}]}}}]))
+            result      = list(remotedb.climo.aggregate([{'$project':{'max':{'$max':'temperature'}, 'min':{'$min':'temperature'}, 'avg':{'$avg':'temperature'}, 'range':{'$subtract':[{'$max':'temperature'},{'$min': 'temperature'}]}}},{'$gte':start,'$lte':end}]))
         except Exception as e:
             msg = str(e)
             print("temperatureMMAS error ",msg)            
