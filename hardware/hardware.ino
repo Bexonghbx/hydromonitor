@@ -53,10 +53,12 @@ static const char* mqtt_server    = "yanacreations.com";                // Broke
 static uint16_t mqtt_port         = 1883;
 
 // WIFI CREDENTIALS
-const char* ssid                  = "MonaConnect"; // Add your Wi-Fi ssid
-const char* password              = ""; // Add your Wi-Fi password 
+//const char* ssid                  = "MonaConnect"; // Add your Wi-Fi ssid
+//const char* password              = ""; // Add your Wi-Fi password 
 //const char* ssid                  = "UNTC-Connect"; // Add your Wi-Fi ssid
 //const char* password              = "risenlord^19"; // Add your Wi-Fi password 
+const char* ssid                  = "DESKTOP-PJ8NO24 8386"; // Add your Wi-Fi ssid
+const char* password              = "7(3P4i45"; // Add your Wi-Fi password 
 
 
 
@@ -123,7 +125,6 @@ void setup() {
 
 void loop() {
     // put your main code here, to run repeatedly:
-    //vUpdate();
     vTaskDelay(1000 / portTICK_PERIOD_MS);    
 }
 
@@ -189,7 +190,7 @@ void vUpdate( void * pvParameters )  {
               serializeJson(doc, message);  // Seralize / Covert JSon object to JSon string and store in char* array  
                
               // 5. Publish message to a topic sobscribed to by both backend and frontend   
-              publish("620148117", message);    // Publish to a topic that bot the Backend and the Frontend subscribes to.             
+              publish("620148117", message);    // Publish to a topic that both the Backend and the Frontend subscribes to.             
 
           }
 
@@ -242,9 +243,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
     // 1. EXTRACT ALL PARAMETERS: NODES, RED,GREEN, BLUE, AND BRIGHTNESS FROM JSON OBJECT
     uint8_t     brightness    = doc["brightness"];
     uint8_t     l             = doc["leds"];
-    uint8_t     r             = doc["color"][0];
-    uint8_t     g             = doc["color"][1];
-    uint8_t     b             = doc["color"][2];
+    uint8_t     r             = doc["color"]["r"];
+    uint8_t     g             = doc["color"]["g"];
+    uint8_t     b             = doc["color"]["b"];
 
     // 2. ITERATIVELY, TURN ON LED(s) BASED ON THE VALUE OF NODES. Ex IF NODES = 2, TURN ON 2 LED(s)
     for(int x=0; x<l; x++){  
