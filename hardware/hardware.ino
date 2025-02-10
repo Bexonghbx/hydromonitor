@@ -160,6 +160,8 @@ void vUpdate( void * pvParameters )  {
           // 2. Read temperature as Celsius   and save in variable below
           double t = dht.readTemperature();
 
+          double hi = calcHeatIndex(convert_Celsius_to_fahrenheit(t),h);
+
           if (isnan(h) || isnan(t)) {
             Serial.println(F("Failed to read from DHT sensor!"));
             return;
@@ -168,7 +170,9 @@ void vUpdate( void * pvParameters )  {
           Serial.print(h);
           Serial.print(F("%  Temperature: "));
           Serial.print(t);
-          Serial.println(F("°C "));
+          Serial.print(F("°C  Heat Index: "));
+          Serial.print(hi);
+          Serial.println(F("°F "));
 
           if(isNumber(t)){
               // ##Publish update according to ‘{"id": "student_id", "timestamp": 1702212234, "temperature": 30, "humidity":90, "heatindex": 30}’
@@ -184,7 +188,7 @@ void vUpdate( void * pvParameters )  {
               doc["timestamp"]    = getTimeStamp();
               doc["temperature"]  = t;
               doc["humidity"]     = h;
-              doc["heatindex"]    = calcHeatIndex(convert_Celsius_to_fahrenheit(t),h);
+              doc["heatindex"]    = hi;
 
               // 4. Seralize / Covert JSon object to JSon string and store in message array
               serializeJson(doc, message);  // Seralize / Covert JSon object to JSon string and store in char* array  
