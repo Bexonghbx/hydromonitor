@@ -123,7 +123,7 @@ export const useAppStore =  defineStore('app', ()=>{
     } 
 
 
-    const getFreqDistro = async (start,end)=>{ 
+    const getFreqDistro = async (variable,start,end)=>{ 
         // FETCH REQUEST WILL TIMEOUT AFTER 20 SECONDS 
         const controller    = new AbortController(); 
         const signal        = controller.signal; 

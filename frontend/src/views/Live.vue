@@ -3,7 +3,7 @@
         <v-row max-width=1200px>
             <v-col cols=9>
                 <figure class="highcharts-figure">
-                    <v-divider id="container"></v-divider>
+                    <div id="container"></div>
                 </figure>
             </v-col>
             <v-col cols=3>
@@ -27,7 +27,7 @@
         <v-row max-width=1200px justify="start">
             <v-col cols=9>
                 <figure class="highcharts-figure">
-                    <v-divider id="container1"></v-divider>
+                    <div id="container1"></div>
                 </figure>
             </v-col>
         </v-row>

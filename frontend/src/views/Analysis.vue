@@ -5,47 +5,52 @@
                 <v-sheet class="pd-2" height=250>
                     <p>Enter date range for Analysis</p>
                     <v-divider></v-divider>
-                    <v-text-field v-model="start" class="mr-5" flat label="Start date" type="Date" density="compact" variant="solo-inverted" style="max-width: 300px;"></v-text-field>
-                    <v-text-field v-model="end" flat label="End date" type="Date" density="compact" variant="solo-inverted" style="max-width: 300px;"></v-text-field>
+                    <v-text-field flat type="Date" density="compact" variant="solo-inverted" style="max-width: 300px;" label="Start date" v-model="start" class="mr-5"></v-text-field>
+                    <v-text-field flat type="Date" density="compact" variant="solo-inverted" style="max-width: 300px;" label="End date" v-model="end"></v-text-field>
                     <v-spacer></v-spacer>
                     <v-btn @click="updateLineCharts(); updateCards(); updateHistogramCharts(); updateScatterCharts();" text="Analyze" color="primary" variant="tonal"></v-btn>
                 </v-sheet>
             </v-col>
             <v-col cols="3" align="center">
-                <v-card-item class="mb-n5">
-                    <v-chip-group class="d-flex flex-row justify-center" color="primaryContainer" variant="flat">
-                        <v-tooltip text="Min" location="start">
-                            <v-chip>{{ temperature.min }}</v-chip>
-                        </v-tooltip>
-                        <v-tooltip text="Range" location="top">
-                            <v-chip>{{ temperature.range }}</v-chip>
-                        </v-tooltip>
-                        <v-tooltip text="Max" location="end">
-                            <v-chip>{{ temperature.max }}</v-chip>
-                        </v-tooltip>
-                    </v-chip-group>
-                </v-card-item>
+                <v-card title="Temperature" width=250 variant="outlined" color="primary" density="compact" rounded="lg">
+                    <v-card-item class="mb-n5">
+                        <v-chip-group class="d-flex flex-row justify-center" color="primaryContainer" variant="flat">
+                            
+                            <v-chip>{{ temperature.min }}
+                                <v-tooltip activator="parent" location="start">Min</v-tooltip>
+                            </v-chip>
+                            <v-chip>{{ temperature.range }}
+                                <v-tooltip activator="parent" location="top">Range</v-tooltip>
+                            </v-chip>
+                            <v-chip>{{ temperature.max }}
+                                <v-tooltip activator="parent" location="end">Max</v-tooltip>
+                            </v-chip>
+                        </v-chip-group>
+                    </v-card-item>
                 <v-card-item align="center">
                     <span class="text-h1 text-primary font-weight-bold">{{ temperature.avg }}</span>
                 </v-card-item>
+                </v-card>
             </v-col>
             <v-col cols="3" align="center">
-                <v-card-item class="mb-n5">
-                    <v-chip-group class="d-flex flex-row justify-center" color="primaryContainer" variant="flat">
-                        <v-tooltip text="Min" location="start">
-                            <v-chip>{{ humidity.min }}</v-chip>
-                        </v-tooltip>
-                        <v-tooltip text="Range" location="top">
-                            <v-chip>{{ humidity.range }}</v-chip>
-                        </v-tooltip>
-                        <v-tooltip text="Max" location="end">
-                            <v-chip>{{ humidity.max }}</v-chip>
-                        </v-tooltip>
-                    </v-chip-group>
-                </v-card-item>
-                <v-card-item align="center">
-                    <span class="text-h1 text-primary font-weight-bold">{{ humidity.avg }}</span>
-                </v-card-item>
+                <v-card title="Humidity" width=250 variant="outlined" color="primary" density="compact" rounded="lg">
+                    <v-card-item class="mb-n5">
+                        <v-chip-group class="d-flex flex-row justify-center" color="primaryContainer" variant="flat">
+                            <v-chip>{{ humidity.min }}
+                                <v-tooltip activator="parent" location="start">Min</v-tooltip>
+                            </v-chip>
+                            <v-chip>{{ humidity.range }}
+                                <v-tooltip activator="parent" location="top">Range</v-tooltip>
+                            </v-chip>
+                            <v-chip>{{ humidity.max }}
+                                <v-tooltip activator="parent" location="end">Max</v-tooltip>
+                            </v-chip>
+                        </v-chip-group>
+                    </v-card-item>
+                    <v-card-item align="center">
+                        <span class="text-h1 text-primary font-weight-bold">{{ humidity.avg }}</span>
+                    </v-card-item>
+                </v-card>
             </v-col>
         </v-row>
         <v-row max-width=1200px>
@@ -118,7 +123,7 @@ const CreateCharts = async () => {
 tempHiChart.value = Highcharts.chart('container', { 
     chart: { zoomType: 'x' }, 
     title: { text: 'Temperature and Heat Index Analysis', align: 'left' }, 
-    subtitle: 'The heat index, also known as the "apparent temperature", is a measure that combines air temperature and relative humidity to assess how hot it feels to the human body. The relationship between heat index and air temperature is influenced by humidity levels. As humidity increases, the heat index also rises, making the perceived temperature higher than the actual air temperature.',
+    subtitle: { text: 'The heat index, also known as the "apparent temperature", is a measure that combines air temperature and relative humidity to assess how hot it feels to the human body. The relationship between heat index and air temperature is influenced by humidity levels. As humidity increases, the heat index also rises, making the perceived temperature higher than the actual air temperature.'},
 
     yAxis: {  
         title: { text: 'Air Temperature & Heat Index' , style:{color:'#000000'}},
@@ -180,25 +185,34 @@ humidChart.value = Highcharts.chart('container0', {
 histogramChart.value = Highcharts.chart('container1', { 
     chart: { zoomType: 'x' }, 
     title: { text: 'Frequency Distribution Analysis', align: 'left' }, 
+    
+    plotOptions: {
+        series: {
+            // general options for all series
+        },
+        column: {
+            // shared options for all histogram series
+        }
+    },
 
     series: [
         {
             name: 'Temperature', 
-            type: 'spcol', 
+            type: 'column', 
             data: [],
             turboThreshold: 0,
             color: Highcharts.getOptions().colors[0] 
         },
         {
             name: 'Humidity', 
-            type: 'spcol', 
+            type: 'column', 
             data: [],
             turboThreshold: 0,
             color: Highcharts.getOptions().colors[2] 
         },
         {
             name: 'Heat Index', 
-            type: 'spcol', 
+            type: 'column', 
             data: [],
             turboThreshold: 0,
             color: Highcharts.getOptions().colors[1] 
@@ -209,7 +223,7 @@ tempHiScatter.value = Highcharts.chart('container2', {
     chart: { zoomType: 'x' }, 
     title: { text: 'Temperature & Heat Index Correlation Analysis', align: 'left' }, 
 
-    subtitle: 'Visualize the relationship between Temperature and Heat Index as well as revealing patterns or trends in the data' ,
+    subtitle: { text: 'Visualize the relationship between Temperature and Heat Index as well as revealing patterns or trends in the data' },
 
     yAxis: {  
         title: { text: 'Heat Index' , style:{color:'#000000'}},
@@ -227,7 +241,7 @@ tempHiScatter.value = Highcharts.chart('container2', {
     series: [
         {
             name: 'Analysis', 
-            type: 'spscatter', 
+            type: 'scatter', 
             data: [],
             turboThreshold: 0,
             color: Highcharts.getOptions().colors[0] 
@@ -238,7 +252,7 @@ humidHiScatter.value = Highcharts.chart('container3', {
     chart: { zoomType: 'x' }, 
     title: { text: 'Humidity & Heat Index Correlation Analysis', align: 'left' }, 
 
-    subtitle: 'Visualize the relationship between Humidity and Heat Index as well as revealing patterns or trends in the data' ,
+    subtitle: { text: 'Visualize the relationship between Humidity and Heat Index as well as revealing patterns or trends in the data' },
 
     yAxis: {  
         title: { text: 'Heat Index' , style:{color:'#000000'}},
@@ -256,7 +270,7 @@ humidHiScatter.value = Highcharts.chart('container3', {
     series: [
         {
             name: 'Analysis', 
-            type: 'spscatter', 
+            type: 'scatter', 
             data: [],
             turboThreshold: 0,
             color: Highcharts.getOptions().colors[0] 
@@ -302,20 +316,22 @@ const updateCards = async ()=>{
          // 2. Fetch data from backend by calling the API functions  
         const temp = await AppStore.getTemperatureMMAR(startDate,endDate); 
         const humid = await AppStore.getHumidityMMAR(startDate,endDate);  
-        console.log(humid) 
+        console.log(temp);
+        console.log(humid);
+
 
         temperature.max = temp[0].max.toFixed(1); 
 
         //3. complete for min, avg and range  
-        temperature.min = temp[1].min.toFixed(1);
-        temperature.avg = temp[2].avg.toFixed(1);
-        temperature.range = temp[3].range.toFixed(1);
+        temperature.min = temp[0].min.toFixed(1);
+        temperature.avg = temp[0].avg.toFixed(1);
+        temperature.range = temp[0].range.toFixed(1);
 
         //4. complete max, min, avg and range for the humidity variable   
         humidity.max = humid[0].max.toFixed(1);  
-        humidity.min = humid[1].min.toFixed(1);
-        humidity.avg = humid[2].avg.toFixed(1);
-        humidity.range = humid[3].range.toFixed(1); 
+        humidity.min = humid[0].min.toFixed(1);
+        humidity.avg = humid[0].avg.toFixed(1);
+        humidity.range = humid[0].range.toFixed(1); 
     }
 }
 

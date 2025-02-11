@@ -53,12 +53,12 @@ static const char* mqtt_server    = "yanacreations.com";                // Broke
 static uint16_t mqtt_port         = 1883;
 
 // WIFI CREDENTIALS
-const char* ssid                  = "MonaConnect"; // Add your Wi-Fi ssid
-const char* password              = ""; // Add your Wi-Fi password 
+//const char* ssid                  = "MonaConnect"; // Add your Wi-Fi ssid
+//const char* password              = ""; // Add your Wi-Fi password 
 //const char* ssid                  = "UNTC-Connect"; // Add your Wi-Fi ssid
 //const char* password              = "risenlord^19"; // Add your Wi-Fi password 
-//const char* ssid                  = "DESKTOP-PJ8NO24 8386"; // Add your Wi-Fi ssid
-//const char* password              = "7(3P4i45"; // Add your Wi-Fi password 
+const char* ssid                  = "DESKTOP-PJ8NO24 8386"; // Add your Wi-Fi ssid
+const char* password              = "7(3P4i45"; // Add your Wi-Fi password 
 
 
 
