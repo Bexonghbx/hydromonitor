@@ -17,13 +17,13 @@
                         <v-chip-group class="d-flex flex-row justify-center" color="primaryContainer" variant="flat">
                             
                             <v-chip>{{ temperature.min }}
-                                <v-tooltip activator="parent" location="start">Min</v-tooltip>
+                                <v-tooltip activator="parent" location="start" text="Min"></v-tooltip>
                             </v-chip>
                             <v-chip>{{ temperature.range }}
-                                <v-tooltip activator="parent" location="top">Range</v-tooltip>
+                                <v-tooltip activator="parent" location="top" text="Range"></v-tooltip>
                             </v-chip>
                             <v-chip>{{ temperature.max }}
-                                <v-tooltip activator="parent" location="end">Max</v-tooltip>
+                                <v-tooltip activator="parent" location="end" text="Max"></v-tooltip>
                             </v-chip>
                         </v-chip-group>
                     </v-card-item>
@@ -37,13 +37,13 @@
                     <v-card-item class="mb-n5">
                         <v-chip-group class="d-flex flex-row justify-center" color="primaryContainer" variant="flat">
                             <v-chip>{{ humidity.min }}
-                                <v-tooltip activator="parent" location="start">Min</v-tooltip>
+                                <v-tooltip activator="parent" location="start" text="Min"></v-tooltip>
                             </v-chip>
                             <v-chip>{{ humidity.range }}
-                                <v-tooltip activator="parent" location="top">Range</v-tooltip>
+                                <v-tooltip activator="parent" location="top" text="Range"></v-tooltip>
                             </v-chip>
                             <v-chip>{{ humidity.max }}
-                                <v-tooltip activator="parent" location="end">Max</v-tooltip>
+                                <v-tooltip activator="parent" location="end" text="Max"></v-tooltip>
                             </v-chip>
                         </v-chip-group>
                     </v-card-item>
